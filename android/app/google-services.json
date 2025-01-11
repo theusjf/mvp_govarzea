@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "969672774343",
+    "project_id": "govarzeamvp",
+    "storage_bucket": "govarzeamvp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969672774343:android:156bc07b3a7236be2fe4e2",
+        "android_client_info": {
+          "package_name": "com.example.mvp_govarzea"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEhW18Ze7L59mwqf7myVMi1XqatXcG6as"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
