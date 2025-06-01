@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mvp_govarzea/models/posts.dart';
-import 'pages/signup/signup.dart';
-import 'pages/inicio/inicio.dart';
-import 'pages/login/login.dart';
-
-
+import '/views/splash_screen_view.dart';
+import '/models/post_model.dart';
 
 void main() {
   postExemplo();
@@ -16,14 +12,9 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (_) => const Inicio(),
-        '/login': (_) => const Login(),
-        '/signup': (_) => const Signup()
-      },
+      home: SplashScreen(),
     );
   }
 }

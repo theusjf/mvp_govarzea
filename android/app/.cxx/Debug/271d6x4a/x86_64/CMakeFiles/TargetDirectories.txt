@@ -1,0 +1,2 @@
+C:/Users/mathe/StudioProjects/mvp_govarzea/android/app/.cxx/Debug/271d6x4a/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/mathe/StudioProjects/mvp_govarzea/android/app/.cxx/Debug/271d6x4a/x86_64/CMakeFiles/rebuild_cache.dir
