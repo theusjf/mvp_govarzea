@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget {
             right: 0,
             child: Center(
               child: Text(
-                'GoVarzea',
+                'GoVarzea!',
                 style: TextStyle(
                   fontSize: 70,
                   color: Colors.white,
