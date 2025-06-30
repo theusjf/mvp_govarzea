@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../models/post_model.dart';
-import '../models/usuario_model.dart';
+import '/models/post_model.dart';
+import '/models/pessoa_models.dart';
 
 class CriarController {
   final textoController = TextEditingController();
@@ -16,7 +16,7 @@ class CriarController {
     return null;
   }
 
-  Post criarPost(Usuario usuario, File? imagem) {
+  Post criarPost(Pessoa usuario, File? imagem) {
     return Post(
       usuario: usuario,
       tempo: DateTime.now(),

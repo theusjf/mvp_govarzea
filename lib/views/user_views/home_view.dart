@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '/models/usuario_model.dart';
+import '/models/pessoa_models.dart';
 import '/models/post_model.dart';
 
 class HomeView extends StatefulWidget {
-  final Usuario usuario;
+  final Pessoa usuario;
   const HomeView({super.key, required this.usuario});
 
   @override

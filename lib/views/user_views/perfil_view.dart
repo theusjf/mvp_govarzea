@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '/views/login_view.dart';
-import '/models/usuario_model.dart';
-import '../../../controllers/perfil_controller.dart';
+import '/models/pessoa_models.dart';
+import '/controllers/perfil_controller.dart';
 
 class PerfilView extends StatefulWidget {
-  final Usuario usuario;
+  final Pessoa usuario;
 
   const PerfilView({super.key, required this.usuario});
 
@@ -35,7 +35,7 @@ class _PerfilViewState extends State<PerfilView> {
               child: widget.usuario.foto != null
                   ? ClipOval(
                 child: Image.file(
-                  File(widget.usuario.foto!.path),
+                  File(widget.usuario.foto!),
                   width: 160,
                   height: 160,
                   fit: BoxFit.cover,
@@ -51,23 +51,29 @@ class _PerfilViewState extends State<PerfilView> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: [
+                  controller.campo('Cpf', controller.cpfController),
                   controller.campo('Nome', controller.nomeController),
                   controller.campo('Email', controller.emailController),
-                  controller.campo('CPF', controller.cpfController, enabled: false),
                   controller.campo('Telefone', controller.telefoneController),
-                  controller.campo('Data de Nascimento', controller.dataNascController, enabled: false),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        if (controller.isEditing) {
-                          controller.atualizarUsuario();
+                    onPressed: () async {
+                      if (controller.isEditing) {
+                        final sucesso = await controller.atualizarUser();
+                        if (sucesso) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Usuário atualizado com sucesso')),
+                            const SnackBar(
+                                content: Text('Usuário atualizado com sucesso')),
                           );
                         } else {
-                          controller.isEditing = true;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Erro ao atualizar usuário')),
+                          );
                         }
+                      }
+                      setState(() {
+                        controller.isEditing = !controller.isEditing;
                       });
                     },
                     style: ElevatedButton.styleFrom(
@@ -75,7 +81,9 @@ class _PerfilViewState extends State<PerfilView> {
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    child: Text(controller.isEditing ? 'Salvar Alterações' : 'Editar Perfil'),
+                    child: Text(controller.isEditing
+                        ? 'Salvar Alterações'
+                        : 'Editar Perfil'),
                   ),
                 ],
               ),
@@ -102,15 +110,24 @@ class _PerfilViewState extends State<PerfilView> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Erro ao excluir conta')),
-                  );
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginView()),
-                        (route) => false,
-                  );
+                onPressed: () async {
+                  final sucesso = await controller.deleteUser();
+                  if (sucesso) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Conta excluída')),
+                    );
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginView()),
+                          (route) => false,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Erro ao excluir a conta')),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

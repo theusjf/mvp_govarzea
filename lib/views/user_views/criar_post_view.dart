@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '/models/post_model.dart';
-import '/controllers/criar_controller.dart';
-import '/models/usuario_model.dart';
+import '/controllers/criar_post_controller.dart';
+import '/models/pessoa_models.dart';
 
 class CriarView extends StatefulWidget {
-  final Usuario usuario;
+  final Pessoa usuario;
   const CriarView({super.key, required this.usuario});
 
   @override
