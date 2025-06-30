@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '/views/usuario_views/usuario_view.dart';
+import '/views/user_views/user_view.dart';
 import '/models/pessoa_models.dart';
-import 'get_tipo_perfil.dart';
+import '../get_tipo_perfil.dart';
 
 class LoginController {
   final String pessoasUrl = 'http://167.234.248.188:8080/v1/pessoa';

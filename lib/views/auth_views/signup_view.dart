@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mvp_govarzea/views/signup_funcao_view.dart';
-import '/controllers/signup_controller.dart';
+import 'package:mvp_govarzea/views/auth_views/signup_funcao_view.dart';
+import '../../controllers/auth_controllers/signup_controller.dart';
 import '/widgets/custom_text_field.dart';
 import 'login_view.dart';
 
