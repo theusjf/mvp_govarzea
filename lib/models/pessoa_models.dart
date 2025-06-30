@@ -1,35 +1,41 @@
-import 'dart:io';
+enum Role { ROLE_Jogador, ROLE_Dirigente, ROLE_Torcedor }
 
-enum Funcao { Torcedor, Jogador, Dirigente }
-
-class Usuario {
+class Pessoa {
   final String cpf;
   final String nome;
   final String email;
-  final String senha;
   final String telefone;
-  final Funcao funcao;
+  final String senha;
+  Role? tipoPerfil;
   final String? foto;
 
-  Usuario({
+  Pessoa({
     required this.cpf,
     required this.nome,
     required this.email,
-    required this.senha,
     required this.telefone,
-    required this.funcao,
+    required this.senha,
+    this.tipoPerfil,
     this.foto,
   });
 
-  factory Usuario.fromJson(Map<String, dynamic> json) {
-    return Usuario(
-      cpf: json['cpf'],
-      nome: json['nome'],
-      email: json['email'],
-      senha: json['senha'],
-      telefone: json['telefone'],
-      funcao: Funcao.values.firstWhere((e) => e.name == json['tipoPerfil']),
-      foto: json['fotoUrl'],
+  factory Pessoa.fromJson(Map<String, dynamic> json) {
+    Role? perfil;
+    if (json['tipoPerfil'] != null) {
+      perfil = Role.values.firstWhere(
+            (e) => e.name == json['tipoPerfil'],
+        orElse: () => Role.ROLE_Jogador,
+      );
+    } else {
+    }
+    return Pessoa(
+      cpf: json['cpf'] ?? '',
+      nome: json['nome'] ?? '',
+      email: json['email'] ?? '',
+      telefone: json['telefone'] ?? '',
+      senha: json['senha'] ?? '',
+      tipoPerfil: perfil,
+      foto: json['foto'],
     );
   }
 
@@ -38,84 +44,101 @@ class Usuario {
       'cpf': cpf,
       'nome': nome,
       'email': email,
-      'senha': senha,
       'telefone': telefone,
-      'tipoPerfil': funcao.name,
-      'fotoUrl': foto,
-    };
-  }
-}
-
-class Torcedor {
-  final Usuario usuario;
-
-  Torcedor({required this.usuario});
-
-  factory Torcedor.fromJson(Map<String, dynamic> json) {
-    return Torcedor(
-      usuario: Usuario.fromJson(json['usuario']),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'usuario': usuario.toJson(),
-    };
-  }
-}
-
-class Jogador {
-  final Usuario usuario;
-  final String apelido;
-  final String numeroCamisa;
-
-  Jogador({
-    required this.usuario,
-    required this.apelido,
-    required this.numeroCamisa,
-  });
-
-  factory Jogador.fromJson(Map<String, dynamic> json) {
-    return Jogador(
-      usuario: Usuario.fromJson(json['usuario']),
-      apelido: json['apelido'],
-      numeroCamisa: json['numeroCamisa'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'usuario': usuario.toJson(),
-      'apelido': apelido,
-      'numeroCamisa': numeroCamisa,
+      'senha': senha,
+      'tipoPerfil': tipoPerfil?.name,
+      'foto': foto,
     };
   }
 }
 
 
 class Dirigente {
-  final Usuario usuario;
+  final String cpf;
   final String cargo;
+  final Pessoa pessoa;
 
   Dirigente({
-    required this.usuario,
+    required this.cpf,
     required this.cargo,
+    required this.pessoa,
   });
 
   factory Dirigente.fromJson(Map<String, dynamic> json) {
     return Dirigente(
-      usuario: Usuario.fromJson(json['usuario']),
-      cargo: json['cargo'],
+      cpf: json['cpf'] ?? '',
+      cargo: json['cargo'] ?? '',
+      pessoa: Pessoa.fromJson(json['pessoa'] ?? {}),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'usuario': usuario.toJson(),
+      'cpf': cpf,
       'cargo': cargo,
+      'pessoa': pessoa.toJson(),
     };
   }
 }
 
 
+class Jogador {
+  final String cpf;
+  final String? apelido;
+  final String? numeroCamisa;
+  final Pessoa pessoa;
 
+  Jogador({
+    required this.cpf,
+    this.apelido,
+    this.numeroCamisa,
+    required this.pessoa,
+  });
+
+  factory Jogador.fromJson(Map<String, dynamic> json) {
+    return Jogador(
+      cpf: json['cpf'] ?? '',
+      apelido: json['apelido'],
+      numeroCamisa: json['numeroCamisa'],
+      pessoa: Pessoa.fromJson(json['pessoa'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cpf': cpf,
+      'apelido': apelido,
+      'numeroCamisa': numeroCamisa,
+      'pessoa': pessoa.toJson(),
+    };
+  }
+}
+
+
+class Torcedor {
+  final String cpf;
+  final String biografia;
+  final Pessoa pessoa;
+
+  Torcedor({
+    required this.cpf,
+    required this.biografia,
+    required this.pessoa,
+  });
+
+  factory Torcedor.fromJson(Map<String, dynamic> json) {
+    return Torcedor(
+      cpf: json['cpf'] ?? '',
+      biografia: json['biografia'] ?? '',
+      pessoa: Pessoa.fromJson(json['pessoa'] ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cpf': cpf,
+      'biografia': biografia,
+      'pessoa': pessoa.toJson(),
+    };
+  }
+}
