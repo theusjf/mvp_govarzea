@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import '/views/splash_screen_view.dart';
-import '/models/post_model.dart';
+import 'package:mvp_govarzea/views/splash_screen_view.dart';
+
 
 void main() {
-  postExemplo();
-  runApp(const App());
+  runApp(const MyApp());
 }
 
-class App extends StatelessWidget {
-  const App({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+
+
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Govarzea',
       home: SplashScreen(),
     );
   }
