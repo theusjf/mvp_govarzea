@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CustomDropdownField<T> extends StatelessWidget {
+class CustomDropdownField<Type> extends StatelessWidget {
   final String labelText;
-  final T? value; // tipo de dado
-  final List<T> items;
-  final String Function(T) itemLabel;
-  final void Function(T?) onChanged;
-  final String? Function(T?)? validator;
+  final Type? value;
+  final List<Type> items;
+  final String Function(Type) itemLabel;
+  final void Function(Type?) onChanged;
+  final String? Function(Type?)? validator;
 
   const CustomDropdownField({
     super.key,
@@ -22,7 +22,7 @@ class CustomDropdownField<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: DropdownButtonFormField<T>(
+      child: DropdownButtonFormField<Type>(
         value: value,
         decoration: InputDecoration(
           labelText: labelText,
@@ -43,7 +43,7 @@ class CustomDropdownField<T> extends StatelessWidget {
         style: const TextStyle(color: Colors.black, fontSize: 16),
         onChanged: onChanged,
         items: items.map((item) {
-          return DropdownMenuItem<T>(
+          return DropdownMenuItem<Type>(
             value: item,
             child: Text(itemLabel(item)),
           );
