@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/controllers/criar_partida_controller.dart';
+import '/controllers/user_controllers/dirigente_controllers/criar_partida_controller.dart';
 import '/models/partida_model.dart';
 import '/models/time_model.dart';
 import '/models/pessoa_models.dart';
