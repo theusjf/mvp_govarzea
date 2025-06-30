@@ -11,5 +11,4 @@ Funcionalidades
 - Marcação e painel de partidas (apenas pré-visualização local)
 
 Disponibilização
-- APK Android:
-- Versão Web (visualizção apenas em formato mobile por enquanto):
+- APK Android: https://github.com/theusjf/mvp_govarzea/releases/tag/v1.0
