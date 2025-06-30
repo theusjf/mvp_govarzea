@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '/models/post_model.dart';
-import '/controllers/criar_post_controller.dart';
+import '/controllers/user_controllers/criar_post_controller.dart';
 import '/models/pessoa_models.dart';
 
 class CriarView extends StatefulWidget {

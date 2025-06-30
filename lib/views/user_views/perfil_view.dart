@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '/views/login_view.dart';
+import '/views/auth_views/login_view.dart';
 import '/models/pessoa_models.dart';
-import '/controllers/perfil_controller.dart';
+import '/controllers/user_controllers/perfil_controller.dart';
 
 class PerfilView extends StatefulWidget {
   final Pessoa usuario;

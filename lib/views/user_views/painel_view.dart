@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/models/pessoa_models.dart';
 import '/models/partida_model.dart';
-import '/controllers/painel_controller.dart';
+import '/controllers/user_controllers/painel_controller.dart';
 import 'dirigente_views/criar_partida_view.dart';
 
 class PainelView extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'home_view.dart';
 import 'criar_post_view.dart';
 import 'painel_view.dart';
 import 'perfil_view.dart';
-import '/controllers/usuario_views_controller.dart';
+import '/controllers/user_controllers/user_views_controller.dart';
 
 class UsuarioView extends StatefulWidget {
   final Pessoa usuario;
