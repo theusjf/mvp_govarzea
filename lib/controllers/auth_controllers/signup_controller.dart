@@ -71,7 +71,6 @@ class SignupController {
         return false;
       }
     } catch (e) {
-      print('Erro no registro: $e');
       return false;
     }
   }

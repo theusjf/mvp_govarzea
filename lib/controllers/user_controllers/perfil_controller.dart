@@ -61,12 +61,10 @@ class PerfilController {
           "nome": nomeController.text.trim(),
           "email": emailController.text.trim(),
           "telefone": telefoneController.text.trim(),
-          "foto": foto,
         }),
       );
       return response.statusCode == 200 || response.statusCode == 204;
     } catch (e) {
-      print('Erro ao atualizar usuário: $e');
       return false;
     }
   }
@@ -75,13 +73,9 @@ class PerfilController {
     final url = Uri.parse('http://167.234.248.188:8080/v1/pessoa/${cpfController.text.trim()}');
     try {
       final response = await http.delete(url);
-      print('DELETE status: ${response.statusCode}');
-      print('DELETE response body: ${response.body}');
       return response.statusCode == 200 || response.statusCode == 204;
     } catch (e) {
-      print('Erro ao deletar usuário: $e');
       return false;
     }
   }
-
 }
