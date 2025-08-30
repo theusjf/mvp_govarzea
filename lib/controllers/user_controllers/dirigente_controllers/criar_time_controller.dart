@@ -4,7 +4,7 @@ import '/models/time_model.dart';
 import '/models/pessoa_models.dart';
 
 class CriarTimeController {
-  final String urlBase = 'http://167.234.248.188:8080/v1';
+  final String urlBase = 'https://167.234.248.188:8080/v1';
 
   List<Jogador> jogDisponiveis = [];
   List<Jogador> jogSelecionados = [];
@@ -83,10 +83,11 @@ class CriarTimeController {
       'nome': time.nome,
       'localizacao': time.localizacao ?? 'Local não informado',
       'fundacao': time.fundacao?.toIso8601String() ?? DateTime.now().toIso8601String(),
-      'dirigente': time.dirigente != null
-          ? {'cpf': time.dirigente!.cpf, 'cargo': time.dirigente!.cargo}
-          : null,
+      'cpfdirigente': time.dirigente!.cpf,
     };
+
+    print('$body');
+
     final response = await http.post(url, headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
@@ -94,6 +95,8 @@ class CriarTimeController {
     }
     return null;
   }
+
+
 
   Future<bool> addJogadores(int idTime, List<Jogador> jogadores) async {
     final url = Uri.parse('$urlBase/time/adicionar-jogador');

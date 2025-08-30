@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/appbar_global.dart';
 import '/models/pessoa_models.dart';
 import '/models/partida_model.dart';
 import '/controllers/user_controllers/painel_controller.dart';
@@ -32,11 +33,7 @@ class _PainelViewState extends State<PainelView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Painel de Jogos'),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
+      appBar: GlobalAppBar(title: 'Painel de Jogos'),
       body: ListView(
         children: [
           ExpansionTile(
@@ -117,7 +114,7 @@ class _PainelViewState extends State<PainelView> {
           'Criar Partida',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: const Color(0xFF122E6C),
       ),
     );
   }

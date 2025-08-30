@@ -42,7 +42,18 @@ class _CriarTimeViewState extends State<CriarTimeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.timeExistente == null ? 'Criar Time' : 'Editar Time'),
+        leading: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Image.asset('assets/app_icon.png'),
+        ),
+        title: Text(
+            widget.timeExistente == null ? 'Criar Time' : 'Editar Time',
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF122E6C),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -119,7 +130,7 @@ class _CriarTimeViewState extends State<CriarTimeView> {
               ElevatedButton(
                 onPressed: salvar,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: const Color(0xFF122E6C),
                   foregroundColor: Colors.white,
                   minimumSize: const Size.fromHeight(50),
                 ),

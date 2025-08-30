@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/appbar_global.dart';
 import '/models/pessoa_models.dart';
 import '/models/post_model.dart';
 
@@ -21,17 +22,7 @@ class _HomeViewState extends State<HomeView> {
     String primeiroNome = widget.usuario.nome.split(' ').first;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text(
-          "Olá, $primeiroNome!",
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 35,
-          ),
-        ),
-      ),
+      appBar: GlobalAppBar(title: 'Olá, $primeiroNome!'),
       body: ListView.builder(
         itemCount: posts.length,
         itemBuilder: (context, index) {
@@ -95,6 +86,11 @@ class _HomeViewState extends State<HomeView> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: const Color(0xFF122E6C),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

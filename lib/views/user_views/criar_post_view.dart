@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import '../../widgets/appbar_global.dart';
 import '/models/post_model.dart';
 import '/controllers/user_controllers/criar_post_controller.dart';
 import '/models/pessoa_models.dart';
@@ -51,11 +52,7 @@ class _CriarViewState extends State<CriarView> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Criar Postagem"),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
+      appBar: GlobalAppBar(title: 'Criar Postagem'),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15),
@@ -123,7 +120,7 @@ class _CriarViewState extends State<CriarView> {
                     child: const Icon(
                       Icons.photo,
                       size: 50,
-                      color: Colors.black,
+                      color: const Color(0xFF122E6C),
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -134,7 +131,7 @@ class _CriarViewState extends State<CriarView> {
                     },
                     child: const Text("Postar"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor: const Color(0xFF122E6C),
                       foregroundColor: Colors.white,
                     ),
                   ),

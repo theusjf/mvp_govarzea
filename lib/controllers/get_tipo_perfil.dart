@@ -9,9 +9,9 @@ class GetTipoPerfil {
 
   GetTipoPerfil(this.usuario);
 
-  final String jogadorUrl = 'http://167.234.248.188:8080/v1/jogador';
-  final String dirigenteUrl = 'http://167.234.248.188:8080/v1/dirigente';
-  final String torcedorUrl = 'http://167.234.248.188:8080/v1/torcedores';
+  final String jogadorUrl = 'https://167.234.248.188:8080/v1/jogador';
+  final String dirigenteUrl = 'https://167.234.248.188:8080/v1/dirigente';
+  final String torcedorUrl = 'https://167.234.248.188:8080/v1/torcedor';
 
   Future<Role?> fetchTipoPerfil() async {
     try {

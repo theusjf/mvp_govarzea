@@ -1,4 +1,4 @@
-enum Role { ROLE_Jogador, ROLE_Dirigente, ROLE_Torcedor }
+enum Role { ROLE_Torcedor, ROLE_Jogador, ROLE_Dirigente }
 
 class Pessoa {
   final String cpf;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../widgets/appbar_global.dart';
 import '/models/pessoa_models.dart';
 import '/models/time_model.dart';
 import '../../../controllers/user_controllers/dirigente_controllers/dirigente_time_controller.dart';
@@ -25,7 +26,7 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Meus Times')),
+      appBar: GlobalAppBar(title: 'Meus Times'),
       body: Column(
         children: [
           Expanded(
@@ -116,7 +117,7 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
                 _carregarTimes();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                backgroundColor: const Color(0xFF122E6C),
                 foregroundColor: Colors.white,
                 minimumSize: const Size.fromHeight(50),
               ),

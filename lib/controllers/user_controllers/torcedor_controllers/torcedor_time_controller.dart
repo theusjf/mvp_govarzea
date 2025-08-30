@@ -6,7 +6,7 @@ class TorcedorTimeController {
   List<Time> todosTimes = [];
 
   Future<void> carregarTimes() async {
-    final url = Uri.parse('http://167.234.248.188:8080/v1/time/listar-time-jogadores');
+    final url = Uri.parse('https://167.234.248.188:8080/v1/time/listar-time-jogadores');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

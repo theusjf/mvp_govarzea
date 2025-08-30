@@ -6,7 +6,7 @@ import '/models/pessoa_models.dart';
 import '../get_tipo_perfil.dart';
 
 class LoginController {
-  final String pessoasUrl = 'http://167.234.248.188:8080/v1/pessoa';
+  final String pessoasUrl = 'https://167.234.248.188:8080/v1/pessoa';
 
   Future<void> fazerLogin(
       BuildContext context,

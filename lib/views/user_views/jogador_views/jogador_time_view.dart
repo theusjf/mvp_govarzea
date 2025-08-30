@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../widgets/appbar_global.dart';
 import '/models/pessoa_models.dart';
 import '/models/time_model.dart';
 import '../../../controllers/user_controllers/jogador_controllers/jogador_time_controller.dart';
@@ -24,14 +25,14 @@ class _JogadorTimeViewState extends State<JogadorTimeView> {
   @override
   Widget build(BuildContext context) {
     if (time == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Meu Time')),
-        body: const Center(child: Text('Você não está em nenhum time')),
+      return const Scaffold(
+          appBar: GlobalAppBar(title: 'Meu Time'),
+        body: Center(child: Text('Você não está em nenhum time')),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Meu Time')),
+      appBar: GlobalAppBar(title: 'Meu Time'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

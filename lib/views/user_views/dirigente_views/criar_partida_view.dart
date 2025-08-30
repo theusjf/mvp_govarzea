@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../widgets/appbar_global.dart';
 import '/controllers/user_controllers/dirigente_controllers/criar_partida_controller.dart';
 import '/models/partida_model.dart';
 import '/models/time_model.dart';
@@ -29,7 +30,7 @@ class _CriarPartidaViewState extends State<CriarPartidaView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Criar Partida')),
+      appBar: GlobalAppBar(title: 'Criar Partida'),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: Form(
@@ -89,7 +90,7 @@ class _CriarPartidaViewState extends State<CriarPartidaView> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: const Color(0xFF122E6C),
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Criar Partida'),

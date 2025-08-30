@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../widgets/appbar_global.dart';
 import '/models/pessoa_models.dart';
 import '/models/time_model.dart';
 import '../../../controllers/user_controllers/torcedor_controllers/torcedor_time_controller.dart';
 import '/widgets/custom_text_field.dart';
+import 'info_time_view.dart';
 
 class TorcedorTimeView extends StatefulWidget {
   final Pessoa usuario;
@@ -37,7 +39,7 @@ class _TorcedorTimeViewState extends State<TorcedorTimeView> {
     setState(() => carregando = true);
     await controller.carregarTimes();
     setState(() {
-      resultadosBusca = [];
+      resultadosBusca = List<Time>.from(controller.todosTimes);
       carregando = false;
     });
   }
@@ -46,10 +48,11 @@ class _TorcedorTimeViewState extends State<TorcedorTimeView> {
     final query = searchController.text.trim().toLowerCase();
     setState(() {
       if (query.isEmpty) {
-        resultadosBusca = [];
+        // sem filtro -> todos
+        resultadosBusca = List<Time>.from(controller.todosTimes);
       } else {
         resultadosBusca = controller.todosTimes.where((time) {
-          return time.nome.toLowerCase().contains(query);
+          return (time.nome).toLowerCase().contains(query);
         }).toList();
       }
     });
@@ -58,50 +61,82 @@ class _TorcedorTimeViewState extends State<TorcedorTimeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const GlobalAppBar(title: 'Times'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // alinha à esquerda
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
             CustomTextField(
               labelText: 'Pesquisar Time',
               hintText: 'Digite o nome do time',
               controller: searchController,
               icon: const Icon(Icons.search),
             ),
-            const SizedBox(height: 10), // menor espaçamento
+            const SizedBox(height: 10),
+
             if (carregando)
               const Padding(
                 padding: EdgeInsets.only(top: 16),
-                child: CircularProgressIndicator(),
+                child: Center(child: CircularProgressIndicator()),
               )
-            else if (resultadosBusca.isEmpty && searchController.text.isNotEmpty)
+            else if (resultadosBusca.isEmpty)
               const Padding(
                 padding: EdgeInsets.only(top: 16),
                 child: Text('Nenhum time encontrado'),
               )
             else
               Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.only(top: 8), // pequeno espaçamento
+                child: GridView.builder(
+                  padding: const EdgeInsets.only(top: 8),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1,
+                  ),
                   itemCount: resultadosBusca.length,
                   itemBuilder: (context, index) {
                     final time = resultadosBusca[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ExpansionTile(
-                        title: Text(time.nome),
-                        subtitle: Text('${time.localizacao ?? ""}'),
-                        children: (time.jogadores ?? []).map((j) {
-                          return ListTile(
-                            title: Text(j.apelido ?? j.cpf),
-                            subtitle: Text('Camisa: ${j.numeroCamisa ?? "-"}'),
-                          );
-                        }).toList(),
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => InfoTimeView(time: time),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.shield,
+                                size: 64,
+                                color: Color(0xFF122E6C),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                time.nome,
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     );
                   },

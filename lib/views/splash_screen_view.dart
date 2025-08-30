@@ -18,18 +18,17 @@ class SplashScreen extends StatelessWidget {
               ),
             ),
           ),
+          Container(
+            color: const Color(0xFF122E6C).withOpacity(0.6),
+          ),
           const Positioned(
-            top: 110,
+            top: 240,
             left: 0,
             right: 0,
             child: Center(
-              child: Text(
-                'GoVarzea',
-                style: TextStyle(
-                  fontSize: 70,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Image(
+                image: AssetImage('assets/app_icon.png'),
+                width: 270,
               ),
             ),
           ),
@@ -45,7 +44,7 @@ class SplashScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: const Color(0xFF122E6C),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 50),
                 ),
@@ -69,7 +68,7 @@ class SplashScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: const Color(0xFF122E6C),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 50),
                 ),

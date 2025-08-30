@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '/models/time_model.dart';
 
 class DirigenteTimeController {
-  final String urlBase = 'http://167.234.248.188:8080/v1';
+  final String urlBase = 'https://167.234.248.188:8080/v1';
 
   Future<List<Time>> listTimes() async {
     final url = Uri.parse('$urlBase/time/listar-time-jogadores');

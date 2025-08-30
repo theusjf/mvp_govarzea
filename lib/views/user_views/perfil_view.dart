@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../widgets/appbar_global.dart';
 import '/views/auth_views/login_view.dart';
 import '/models/pessoa_models.dart';
 import '/controllers/user_controllers/perfil_controller.dart';
@@ -25,6 +26,7 @@ class _PerfilViewState extends State<PerfilView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: GlobalAppBar(title: 'Meu Perfil'),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -77,7 +79,7 @@ class _PerfilViewState extends State<PerfilView> {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor: const Color(0xFF122E6C),
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 50),
                     ),
