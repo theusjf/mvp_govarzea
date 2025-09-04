@@ -42,7 +42,7 @@ class _UsuarioViewState extends State<UsuarioView> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
           BottomNavigationBarItem(icon: Icon(Icons.sports_soccer), label: 'Painel de Jogos'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Criar'),
+          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: 'Criar'),
           BottomNavigationBarItem(icon: Icon(Icons.shield), label: 'Times'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil')
         ],

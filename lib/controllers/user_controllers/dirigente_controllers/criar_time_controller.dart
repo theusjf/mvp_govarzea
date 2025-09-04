@@ -14,8 +14,7 @@ class CriarTimeController {
     final url = Uri.parse('$urlBase/dirigente/$cpf');
     final response = await http.get(url, headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return Dirigente.fromJson(data);
+      return Dirigente.fromJson(jsonDecode(response.body));
     }
     return null;
   }
@@ -86,8 +85,6 @@ class CriarTimeController {
       'cpfdirigente': time.dirigente!.cpf,
     };
 
-    print('$body');
-
     final response = await http.post(url, headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
@@ -95,8 +92,6 @@ class CriarTimeController {
     }
     return null;
   }
-
-
 
   Future<bool> addJogadores(int idTime, List<Jogador> jogadores) async {
     final url = Uri.parse('$urlBase/time/adicionar-jogador');

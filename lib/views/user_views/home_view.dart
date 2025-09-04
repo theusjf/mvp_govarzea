@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/appbar_global.dart';
 import '/models/pessoa_models.dart';
 import '/models/post_model.dart';
+import '/views/user_views/criar_post_view.dart';
 
 class HomeView extends StatefulWidget {
   final Pessoa usuario;
@@ -88,7 +89,14 @@ class _HomeViewState extends State<HomeView> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CriarView(usuario: widget.usuario),
+              )
+          );
+        },
         backgroundColor: const Color(0xFF122E6C),
         child: const Icon(Icons.add, color: Colors.white),
       ),

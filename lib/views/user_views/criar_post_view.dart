@@ -5,6 +5,7 @@ import '../../widgets/appbar_global.dart';
 import '/models/post_model.dart';
 import '/controllers/user_controllers/criar_post_controller.dart';
 import '/models/pessoa_models.dart';
+import 'user_view.dart';
 
 class CriarView extends StatefulWidget {
   final Pessoa usuario;
@@ -48,6 +49,14 @@ class _CriarViewState extends State<CriarView> {
       imagemPost = null;
       _controller.textoController.clear();
     });
+
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UsuarioView(usuario: widget.usuario),
+        )
+    );
+
   }
 
   Widget build(BuildContext context) {
@@ -108,7 +117,6 @@ class _CriarViewState extends State<CriarView> {
                                     setState(() {
                                       imagemPost = null;
                                     });
-                                    Navigator.pop(context);
                                   },
                                 ),
                               ],
@@ -127,7 +135,6 @@ class _CriarViewState extends State<CriarView> {
                   ElevatedButton(
                     onPressed: () {
                       _criarPost();
-                      FocusScope.of(context).unfocus();
                     },
                     child: const Text("Postar"),
                     style: ElevatedButton.styleFrom(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvp_govarzea/views/user_views/campeonatos_view.dart';
 import '/models/pessoa_models.dart';
 import '/views/user_views/criar_post_view.dart';
 import '/views/user_views/home_view.dart';
@@ -16,7 +17,7 @@ class UsuarioViewsController {
   List<Widget> get pages => [
     HomeView(usuario: usuario),
     PainelView(usuario: usuario),
-    CriarView(usuario: usuario),
+    CampeonatosView(),
     timeView,
     PerfilView(usuario: usuario),
   ];

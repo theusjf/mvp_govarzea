@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/appbar_global.dart';
+import '../../time_view.dart';
 import '/models/pessoa_models.dart';
 import '/models/time_model.dart';
 import '../../../controllers/user_controllers/dirigente_controllers/dirigente_time_controller.dart';
@@ -43,63 +44,58 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
                     return const Center(child: Text('Nenhum time cadastrado.'));
                   }
 
-                  return ListView.builder(
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(12),
                     itemCount: times.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.9,
+                    ),
                     itemBuilder: (context, index) {
                       final time = times[index];
-
-                      return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        child: ExpansionTile(
-                          title: Text(time.nome, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                              'Localização: ${time.localizacao}\nFundação: ${time.fundacao?.toLocal().toString().split(' ')[0] ?? 'Não informada'}'),
-                          children: [
-                            if (time.jogadores == null || time.jogadores!.isEmpty)
-                              const Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Text('Nenhum jogador cadastrado.'),
-                              )
-                            else
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: time.jogadores!.length,
-                                itemBuilder: (context, idx) {
-                                  final jogador = time.jogadores![idx];
-                                  return ListTile(
-                                    title: Text('${jogador.apelido}'),
-                                    subtitle: Text('Número ${jogador.numeroCamisa}'),
-                                    trailing: IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () {
-                                        _removerJogadorDialog(jogador, time.idTime!);
-                                      },
-                                    ),
-                                  );
-                                },
+                      return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TimeView(time: time),
                               ),
-                            OverflowBar(
+                            );
+                          },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                TextButton(
-                                  onPressed: () {
-                                    _editarTimeDialog(time);
-                                  },
-                                  child: Text('Editar Time', style: TextStyle(color: Colors.grey[700])),
+                                const Icon(
+                                  Icons.shield,
+                                  size: 48,
+                                  color: Color(0xFF122E6C),
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    if (time.idTime != null) _removerTime(time.idTime!);
-                                  },
-                                  child: const Text('Excluir Time', style: TextStyle(color: Colors.red)),
+                                const SizedBox(height: 8),
+                                Text(
+                                  time.nome,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
                       );
                     },
                   );
+
                 }
               },
             ),

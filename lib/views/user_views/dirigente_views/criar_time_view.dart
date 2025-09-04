@@ -22,7 +22,6 @@ class CriarTimeView extends StatefulWidget {
 
 class _CriarTimeViewState extends State<CriarTimeView> {
   final CriarTimeController controller = CriarTimeController();
-
   final _formKey = GlobalKey<FormState>();
 
   final nomeTimeController = TextEditingController();
@@ -36,111 +35,6 @@ class _CriarTimeViewState extends State<CriarTimeView> {
     super.initState();
     _inicializarCampos();
     carregarDados();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Image.asset('assets/app_icon.png'),
-        ),
-        title: Text(
-            widget.timeExistente == null ? 'Criar Time' : 'Editar Time',
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF122E6C),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              CustomTextField(
-                labelText: 'Nome do Time',
-                hintText: 'Digite o nome do time',
-                controller: nomeTimeController,
-                validator: (v) =>
-                v == null || v.isEmpty ? 'Informe o nome do time' : null,
-              ),
-              CustomTextField(
-                labelText: 'Localização',
-                hintText: 'Digite a localização do time',
-                controller: localizacaoController,
-              ),
-              CustomTextField(
-                labelText: 'Fundação (YYYY-MM-DD)',
-                hintText: 'Digite a data de fundação',
-                controller: fundacaoController,
-                keyboardType: TextInputType.datetime,
-              ),
-              CustomTextField(
-                labelText: 'Pesquisar jogador',
-                hintText: 'Digite o nome do jogador',
-                onChanged: onPesquisaChanged,
-                icon: const Icon(Icons.search),
-              ),
-              if (controller.sugestoes.isNotEmpty)
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: controller.sugestoes.length,
-                    itemBuilder: (context, index) {
-                      final jogador = controller.sugestoes[index];
-                      return ListTile(
-                        title: Text(
-                          '${jogador.pessoa.nome} (${jogador.apelido ?? "-"})',
-                        ),
-                        subtitle: Text('CPF: ${jogador.cpf}'),
-                        onTap: () => adicionarJogador(jogador),
-                      );
-                    },
-                  ),
-                )
-              else
-                const SizedBox(height: 10),
-              const SizedBox(height: 20),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Jogadores selecionados:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: controller.jogSelecionados.length,
-                  itemBuilder: (context, index) {
-                    final jogador = controller.jogSelecionados[index];
-                    return ListTile(
-                      title: Text('${jogador.pessoa.nome}'),
-                      subtitle: Text('Apelido: ${jogador.apelido}'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => removerJogador(jogador),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              ElevatedButton(
-                onPressed: salvar,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF122E6C),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(50),
-                ),
-                child: const Text('Salvar'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   void _inicializarCampos() {
@@ -178,21 +72,14 @@ class _CriarTimeViewState extends State<CriarTimeView> {
 
   Future<void> salvar() async {
     if (!_formKey.currentState!.validate()) return;
-
-    if (dirigenteCompleto == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao carregar dados do dirigente')),
-      );
-      return;
-    }
+    if (dirigenteCompleto == null) return;
 
     DateTime? dataFundacao;
     try {
       dataFundacao = DateTime.parse(fundacaoController.text);
     } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Data de fundação inválida')),
+        const SnackBar(content: Text("Data inválida")),
       );
       return;
     }
@@ -238,5 +125,105 @@ class _CriarTimeViewState extends State<CriarTimeView> {
         );
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+            widget.timeExistente == null ? 'Criar Time' : 'Editar Time',
+            style: TextStyle(
+              color: Colors.white,
+        ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF122E6C),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              CustomTextField(
+                labelText: 'Nome do Time',
+                hintText: 'Digite o nome do time',
+                controller: nomeTimeController,
+                validator: (v) =>
+                v == null || v.isEmpty ? 'Informe o nome do time' : null,
+              ),
+              CustomTextField(
+                labelText: 'Localização',
+                hintText: 'Digite a localização do time',
+                controller: localizacaoController,
+              ),
+              CustomTextField(
+                labelText: 'Fundação (YYYY-MM-DD)',
+                hintText: 'Digite a data de fundação',
+                controller: fundacaoController,
+                keyboardType: TextInputType.datetime,
+              ),
+              CustomTextField(
+                labelText: 'Pesquisar jogador',
+                hintText: 'Digite o nome do jogador',
+                onChanged: onPesquisaChanged,
+                icon: const Icon(Icons.search),
+              ),
+              if (controller.sugestoes.isNotEmpty)
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.sugestoes.length,
+                    itemBuilder: (context, index) {
+                      final jogador = controller.sugestoes[index];
+                      return ListTile(
+                        title: Text('${jogador.pessoa.nome} (${jogador.apelido ?? "-"})'),
+                        subtitle: Text('CPF: ${jogador.cpf}'),
+                        onTap: () => adicionarJogador(jogador),
+                      );
+                    },
+                  ),
+                )
+              else
+                const SizedBox(height: 10),
+              const SizedBox(height: 10),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Jogadores selecionados:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: controller.jogSelecionados.length,
+                  itemBuilder: (context, index) {
+                    final jogador = controller.jogSelecionados[index];
+                    return ListTile(
+                      title: Text('${jogador.pessoa.nome}'),
+                      subtitle: Text('Apelido: ${jogador.apelido}'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => removerJogador(jogador),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              ElevatedButton(
+                onPressed: salvar,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF122E6C),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                ),
+                child: Text(widget.timeExistente == null ? 'Criar Time' : 'Salvar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
