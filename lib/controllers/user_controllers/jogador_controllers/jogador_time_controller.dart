@@ -4,7 +4,7 @@ import '/models/time_model.dart';
 import '/models/pessoa_models.dart';
 
 class JogadorTimeController {
-  final String urlBase = 'https://167.234.248.188:8080/v1';
+  final String urlBase = 'http://167.234.248.188:8080/v1';
 
   Future<Time?> searchJogadorTime(String cpf) async {
     final url = Uri.parse('$urlBase/time/listar-time-jogadores');

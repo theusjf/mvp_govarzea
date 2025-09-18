@@ -29,7 +29,7 @@ class SignupFuncaoController {
     Map<String, dynamic> body = {"cpf": usuario.cpf};
 
     if (funcaoSelecionada == Role.ROLE_Jogador) {
-      url = 'https://167.234.248.188:8080/v1/jogador';
+      url = 'http://167.234.248.188:8080/v1/jogador';
 
       if (apelidoController.text.trim().isEmpty ||
           numeroCamisaController.text.trim().isEmpty) {
@@ -40,7 +40,7 @@ class SignupFuncaoController {
       body['numeroCamisa'] = numeroCamisaController.text.trim();
 
     } else if (funcaoSelecionada == Role.ROLE_Dirigente) {
-      url = 'https://167.234.248.188:8080/v1/dirigente';
+      url = 'http://167.234.248.188:8080/v1/dirigente';
 
       if (cargoController.text.trim().isEmpty) {
         return false;
@@ -49,7 +49,7 @@ class SignupFuncaoController {
       body['cargo'] = cargoController.text.trim();
 
     } else if (funcaoSelecionada == Role.ROLE_Torcedor) {
-      url = 'https://167.234.248.188:8080/v1/torcedor';
+      url = 'http://167.234.248.188:8080/v1/torcedor';
 
       if (biografiaController.text.trim().isEmpty) {
         return false;

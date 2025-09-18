@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class JogadorInfoController {
-  final String jogadorUrl = "https://167.234.248.188:8080/v1/jogador";
-  final String pessoaUrl = "https://167.234.248.188:8080/v1/pessoa";
-  final String timeUrl = "https://167.234.248.188:8080/v1/time/listar-time-jogadores";
+  final String jogadorUrl = "http://167.234.248.188:8080/v1/jogador";
+  final String pessoaUrl = "http://167.234.248.188:8080/v1/pessoa";
+  final String timeUrl = "http://167.234.248.188:8080/v1/time/listar-time-jogadores";
 
   final TextEditingController cpfController = TextEditingController();
   final TextEditingController nomeController = TextEditingController();

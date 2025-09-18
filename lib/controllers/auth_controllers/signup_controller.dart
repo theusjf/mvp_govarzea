@@ -49,7 +49,7 @@ class SignupController {
       "senha": senhaController.text.trim(),
     };
 
-    final url = Uri.parse('https://167.234.248.188:8080/v1/pessoa');
+    final url = Uri.parse('http://167.234.248.188:8080/v1/pessoa');
 
     try {
       final response = await http.post(

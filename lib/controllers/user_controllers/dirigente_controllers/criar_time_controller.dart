@@ -4,7 +4,7 @@ import '/models/time_model.dart';
 import '/models/pessoa_models.dart';
 
 class CriarTimeController {
-  final String urlBase = 'https://167.234.248.188:8080/v1';
+  final String urlBase = 'http://167.234.248.188:8080/v1';
 
   List<Jogador> jogDisponiveis = [];
   List<Jogador> jogSelecionados = [];
