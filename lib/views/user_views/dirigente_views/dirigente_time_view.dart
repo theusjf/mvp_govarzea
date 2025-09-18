@@ -5,6 +5,7 @@ import '/models/pessoa_models.dart';
 import '/models/time_model.dart';
 import '../../../controllers/user_controllers/dirigente_controllers/dirigente_time_controller.dart';
 import 'criar_time_view.dart';
+import 'editar_time_view.dart';
 
 class DirigenteTimeView extends StatefulWidget {
   final Pessoa dirigente;
@@ -60,7 +61,7 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => TimeView(time: time),
+                                builder: (context) => EditarTimeView(time: time),
                               ),
                             );
                           },
