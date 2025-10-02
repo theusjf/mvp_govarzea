@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class JogadorInfoController {
   final String jogadorUrl = "http://167.234.248.188:8080/v1/jogador";
   final String pessoaUrl = "http://167.234.248.188:8080/v1/pessoa";
-  final String timeUrl = "http://167.234.248.188:8080/v1/time/listar-time-jogadores";
+  final String fotoUrlBase = "http://152.70.216.121:8089/v1/pessoa";
 
   final TextEditingController cpfController = TextEditingController();
   final TextEditingController nomeController = TextEditingController();
@@ -13,6 +13,12 @@ class JogadorInfoController {
   final TextEditingController posicaoController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
   final TextEditingController numeroCamisaController = TextEditingController();
+  final TextEditingController alturaController = TextEditingController();
+  final TextEditingController pesoController = TextEditingController();
+  final TextEditingController biografiaController = TextEditingController();
+  final TextEditingController peController = TextEditingController();
+  final TextEditingController idadeController = TextEditingController();
+  String? fotoUrl;
 
   Future<void> carregarJogador(String cpf) async {
     final jogadorRes = await http.get(Uri.parse("$jogadorUrl/$cpf"));
@@ -21,15 +27,26 @@ class JogadorInfoController {
       cpfController.text = data["cpf"] ?? "";
       apelidoController.text = data["apelido"] ?? "";
       numeroCamisaController.text = data["numeroCamisa"] ?? "";
+      posicaoController.text = data["posicao"] ?? "-";
+      alturaController.text = data["altura"]?.toString() ?? "-";
+      pesoController.text = data["peso"]?.toString() ?? "-";
+      biografiaController.text = data["biografia"] ?? "-";
+      peController.text = data["pe"] ?? "-";
     }
 
     final pessoaRes = await http.get(Uri.parse("$pessoaUrl/$cpf"));
     if (pessoaRes.statusCode == 200) {
       final data = jsonDecode(utf8.decode(pessoaRes.bodyBytes));
       nomeController.text = data["nome"] ?? "";
+      idadeController.text = data["idade"]?.toString() ?? "-";
+
+      final fotoRes = await http.get(Uri.parse("$fotoUrlBase/$cpf/foto/url"));
+      if (fotoRes.statusCode == 200 && fotoRes.body.isNotEmpty) {
+        fotoUrl = fotoRes.body;
+      }
     }
 
-    final timeRes = await http.get(Uri.parse(timeUrl));
+    final timeRes = await http.get(Uri.parse("http://167.234.248.188:8080/v1/time/listar-time-jogadores"));
     if (timeRes.statusCode == 200) {
       final data = jsonDecode(utf8.decode(timeRes.bodyBytes));
       for (var time in data) {
@@ -44,7 +61,6 @@ class JogadorInfoController {
         }
       }
     }
-    posicaoController.text = "";
   }
 
   Widget campo(String label, TextEditingController controller) {

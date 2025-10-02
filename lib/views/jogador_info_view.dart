@@ -68,16 +68,22 @@ class _JogadorInfoViewState extends State<JogadorInfoView>
                       CircleAvatar(
                         radius: 60,
                         backgroundColor: Colors.grey[400],
-                        child: const Icon(
-                          Icons.person,
-                          size: 70,
-                          color: Colors.white,
-                        ),
+                        backgroundImage: controller.fotoUrl != null
+                            ? NetworkImage(controller.fotoUrl!)
+                            : null,
+                        child: controller.fotoUrl == null
+                            ? const Icon(Icons.person, size: 70, color: Colors.white)
+                            : null,
                       ),
                       const SizedBox(height: 20),
                       controller.campo("Nome", controller.nomeController),
                       controller.campo("Apelido", controller.apelidoController),
+                      controller.campo("Idade", controller.idadeController),
                       controller.campo("Posição", controller.posicaoController),
+                      controller.campo("Altura", controller.alturaController),
+                      controller.campo("Peso", controller.pesoController),
+                      controller.campo("Pé Dominante", controller.peController),
+                      controller.campo("Biografia", controller.biografiaController),
                       controller.campo("Time Atual", controller.timeController),
                       controller.campo("Número da Camisa", controller.numeroCamisaController),
                     ],

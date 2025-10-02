@@ -7,7 +7,7 @@ class Pessoa {
   final String telefone;
   final String senha;
   Role? tipoPerfil;
-  final String? foto;
+  String? fotoUrl;
 
   Pessoa({
     required this.cpf,
@@ -16,7 +16,7 @@ class Pessoa {
     required this.telefone,
     required this.senha,
     this.tipoPerfil,
-    this.foto,
+    this.fotoUrl,
   });
 
   factory Pessoa.fromJson(Map<String, dynamic> json) {
@@ -26,8 +26,8 @@ class Pessoa {
             (e) => e.name == json['tipoPerfil'],
         orElse: () => Role.ROLE_Jogador,
       );
-    } else {
     }
+
     return Pessoa(
       cpf: json['cpf'] ?? '',
       nome: json['nome'] ?? '',
@@ -35,7 +35,7 @@ class Pessoa {
       telefone: json['telefone'] ?? '',
       senha: json['senha'] ?? '',
       tipoPerfil: perfil,
-      foto: json['foto'],
+      fotoUrl: json['foto_object_icone'],
     );
   }
 
@@ -47,11 +47,10 @@ class Pessoa {
       'telefone': telefone,
       'senha': senha,
       'tipoPerfil': tipoPerfil?.name,
-      'foto': foto,
+      'foto_object_icone': fotoUrl,
     };
   }
 }
-
 
 class Dirigente {
   final String cpf;
@@ -80,7 +79,6 @@ class Dirigente {
     };
   }
 }
-
 
 class Jogador {
   final String cpf;
@@ -113,7 +111,6 @@ class Jogador {
     };
   }
 }
-
 
 class Torcedor {
   final String cpf;

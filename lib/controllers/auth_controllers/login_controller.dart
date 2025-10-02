@@ -23,13 +23,21 @@ class LoginController {
         headers: {'Content-Type': 'application/json'},
       );
 
-      final lista = json.decode(utf8.decode(pessoasResponse.bodyBytes));
-      final userJson = lista.firstWhere(
+      if (pessoasResponse.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro no servidor: ${pessoasResponse.statusCode}')),
+        );
+        return;
+      }
+
+      final lista = json.decode(utf8.decode(pessoasResponse.bodyBytes)) as List;
+
+      final userJson = lista.cast<Map<String, dynamic>>().firstWhere(
             (u) => u['email'] == email,
-        orElse: () => null,
+        orElse: () => {},
       );
 
-      if (userJson == null) {
+      if (userJson.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Usuário não encontrado')),
         );
@@ -40,16 +48,19 @@ class LoginController {
       String? tipoPerfil;
 
       final jogadorResponse = await http.get(Uri.parse('$jogadorUrl/$cpf'));
+
       if (jogadorResponse.statusCode == 200 && jogadorResponse.body.isNotEmpty) {
         tipoPerfil = 'ROLE_JOGADOR';
       }
 
       final dirigenteResponse = await http.get(Uri.parse('$dirigenteUrl/$cpf'));
+
       if (dirigenteResponse.statusCode == 200 && dirigenteResponse.body.isNotEmpty) {
         tipoPerfil = 'ROLE_DIRIGENTE';
       }
 
       final torcedorResponse = await http.get(Uri.parse('$torcedorUrl/$cpf'));
+
       if (torcedorResponse.statusCode == 200 && torcedorResponse.body.isNotEmpty) {
         tipoPerfil = 'ROLE_TORCEDOR';
       }
@@ -59,6 +70,7 @@ class LoginController {
         'password': senha,
         'tipoPerfil': tipoPerfil,
       };
+
 
       final response = await http.post(
         Uri.parse(authUrl),
@@ -73,11 +85,9 @@ class LoginController {
           orElse: () => Role.ROLE_Torcedor,
         );
 
-        // pegar tipo perfil (temporario)
+        // pegar tipo perfil (temporário)
         final getTipoPerfil = GetTipoPerfil(usuario);
         Role? perfil = await getTipoPerfil.fetchTipoPerfil();
-
-        print('Perfil: ${usuario.cpf}: $perfil');
 
         usuario.tipoPerfil = perfil;
 
@@ -87,7 +97,6 @@ class LoginController {
             builder: (context) => UsuarioView(usuario: usuario),
           ),
         );
-
       } else if (response.statusCode == 401 || response.statusCode == 500) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Credenciais inválidas')),
@@ -98,9 +107,11 @@ class LoginController {
         );
       }
     } catch (e) {
+      print("❌ Erro inesperado: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro inesperado: $e')),
       );
     }
   }
+
 }

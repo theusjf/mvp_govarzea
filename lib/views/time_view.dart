@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '/models/time_model.dart';
 import 'jogador_info_view.dart';
+import '/controllers/time_controller.dart';
 
 class TimeView extends StatefulWidget {
   final Time time;
@@ -12,24 +13,32 @@ class TimeView extends StatefulWidget {
 
 class _TimeViewState extends State<TimeView> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late TimeController controller;
+  String? fotoTime;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 6, vsync: this);
+    controller = TimeController(widget.time);
+    _carregarFotoTime();
+  }
+
+  void _carregarFotoTime() async {
+    final url = await controller.buscarFoto();
+    if (url != null) {
+      setState(() {
+        fotoTime = url;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.time.nome,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold
-          ),
-        ),
+        title: Text(widget.time.nome,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: const Color(0xFF122E6C),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -69,21 +78,23 @@ class _TimeViewState extends State<TimeView> with SingleTickerProviderStateMixin
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.shield,
-            size: 150,
-            color: Color(0xFF122E6C),
+          Container(
+            width: 200,
+            height: 150,
+            child: fotoTime != null
+                ? Image.network(fotoTime!, fit: BoxFit.contain)
+                : const Center(
+              child: Icon(Icons.shield, size: 100, color: Color(0xFF122E6C)),
+            ),
           ),
           const SizedBox(height: 8),
           Text('Localização: ${widget.time.localizacao ?? "Não informada"}',
               style: const TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
           Text(
-            'Fundação: ${widget.time.fundacao != null ? widget.time.fundacao!
-                .toLocal().toString().split(" ")[0] : "Não informada"}',
+            'Fundação: ${widget.time.fundacao != null ? widget.time.fundacao!.toLocal().toString().split(" ")[0] : "Não informada"}',
             style: const TextStyle(fontSize: 16),
           ),
-          const SizedBox(height: 8),
         ],
       ),
     );
@@ -91,10 +102,7 @@ class _TimeViewState extends State<TimeView> with SingleTickerProviderStateMixin
 
   Widget _buildEscalacao() {
     final jogadores = widget.time.jogadores ?? [];
-
-    if (jogadores.isEmpty) {
-      return const Center(child: Text("Nenhum jogador cadastrado."));
-    }
+    if (jogadores.isEmpty) return const Center(child: Text("Nenhum jogador cadastrado."));
 
     return GridView.builder(
       padding: const EdgeInsets.all(12),
@@ -111,15 +119,12 @@ class _TimeViewState extends State<TimeView> with SingleTickerProviderStateMixin
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => JogadorInfoView(cpf: jogador.cpf ?? ""),
-              ),
+              MaterialPageRoute(builder: (context) => JogadorInfoView(cpf: jogador.cpf)),
             );
           },
           child: Card(
             elevation: 3,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
@@ -128,14 +133,13 @@ class _TimeViewState extends State<TimeView> with SingleTickerProviderStateMixin
                   const Icon(Icons.person, size: 50, color: Colors.grey),
                   const SizedBox(height: 10),
                   Text(
-                    jogador.apelido!,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                    jogador.apelido ?? "",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Camisa: ${jogador.numeroCamisa!}",
+                    "Camisa: ${jogador.numeroCamisa ?? "-"}",
                     style: const TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ],

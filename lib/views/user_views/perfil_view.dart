@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../widgets/appbar_global.dart';
 import '/views/auth_views/login_view.dart';
 import '/models/pessoa_models.dart';
@@ -16,11 +17,78 @@ class PerfilView extends StatefulWidget {
 
 class _PerfilViewState extends State<PerfilView> {
   late PerfilController controller;
+  String? fotoUrl;
 
   @override
   void initState() {
     super.initState();
     controller = PerfilController(widget.usuario);
+    fotoUrl = widget.usuario.fotoUrl;
+    _carregarFoto();
+  }
+
+  void _carregarFoto() async {
+    final url = await controller.buscarFoto(widget.usuario.cpf);
+    if (url != null) {
+      setState(() {
+        fotoUrl = url;
+      });
+    }
+  }
+
+  Future<void> _pick(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      final novaUrl = await controller.uploadFoto(widget.usuario.cpf, file);
+
+      if (novaUrl != null) {
+        setState(() {
+          fotoUrl = "$novaUrl?${DateTime.now().millisecondsSinceEpoch}";
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Foto atualizada com sucesso')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao atualizar foto')),
+        );
+      }
+    }
+  }
+
+  void _showModalFotos() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          color: Colors.white,
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Selecionar uma foto na galeria'),
+                onTap: () {
+                  _pick(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Tirar uma foto'),
+                onTap: () {
+                  _pick(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -31,23 +99,31 @@ class _PerfilViewState extends State<PerfilView> {
         child: Column(
           children: [
             const SizedBox(height: 50),
-            CircleAvatar(
-              radius: 80,
-              backgroundColor: Colors.grey,
-              child: widget.usuario.foto != null
-                  ? ClipOval(
-                child: Image.file(
-                  File(widget.usuario.foto!),
-                  width: 160,
-                  height: 160,
-                  fit: BoxFit.cover,
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: fotoUrl != null
+                      ? NetworkImage(fotoUrl!)
+                      : null,
+                  child: fotoUrl == null
+                      ? Icon(Icons.person, size: 70, color: Colors.grey[200])
+                      : null,
                 ),
-              )
-                  : Icon(
-                Icons.person,
-                color: Colors.grey[200],
-                size: 70,
-              ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: _showModalFotos,
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.grey[300],
+                      child: Icon(Icons.edit, size: 30, color: Colors.grey[700]),
+                    ),
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(15),
@@ -62,17 +138,15 @@ class _PerfilViewState extends State<PerfilView> {
                     onPressed: () async {
                       if (controller.isEditing) {
                         final sucesso = await controller.atualizarUser();
-                        if (sucesso) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Usuário atualizado com sucesso')),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Erro ao atualizar usuário')),
-                          );
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              sucesso
+                                  ? 'Usuário atualizado com sucesso'
+                                  : 'Erro ao atualizar usuário',
+                            ),
+                          ),
+                        );
                       }
                       setState(() {
                         controller.isEditing = !controller.isEditing;
@@ -114,20 +188,18 @@ class _PerfilViewState extends State<PerfilView> {
               child: ElevatedButton(
                 onPressed: () async {
                   final sucesso = await controller.deleteUser();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        sucesso ? 'Conta excluída' : 'Erro ao excluir a conta',
+                      ),
+                    ),
+                  );
                   if (sucesso) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Conta excluída')),
-                    );
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginView()),
+                      MaterialPageRoute(builder: (context) => const LoginView()),
                           (route) => false,
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Erro ao excluir a conta')),
                     );
                   }
                 },

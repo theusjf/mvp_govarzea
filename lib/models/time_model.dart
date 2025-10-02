@@ -7,6 +7,7 @@ class Time {
   final DateTime? fundacao;
   final Dirigente? dirigente;
   final List<Jogador>? jogadores;
+  String? fotoPath;
 
   Time({
     this.idTime,
@@ -15,6 +16,7 @@ class Time {
     this.fundacao,
     this.dirigente,
     this.jogadores,
+    this.fotoPath,
   });
 
   factory Time.fromJson(Map<String, dynamic> json) {
@@ -33,9 +35,9 @@ class Time {
           .map((j) => Jogador.fromJson(j))
           .toList()
           : [],
+      fotoPath: json['foto_object_icone'],
     );
   }
-
 
   Map<String, dynamic> toJson() {
     return {
@@ -45,9 +47,11 @@ class Time {
       'fundacao': fundacao?.toIso8601String(),
       'dirigente': dirigente?.toJson(),
       'jogadores': jogadores?.map((j) => j.toJson()).toList(),
+      'foto_object_icone': fotoPath,
     };
   }
 }
+
 
 
 

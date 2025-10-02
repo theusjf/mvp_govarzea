@@ -7,9 +7,7 @@ class DirigenteTimeController {
 
   Future<List<Time>> listTimes() async {
     final url = Uri.parse('$urlBase/time/listar-time-jogadores');
-    final response = await http.get(url, headers: {
-      'Content-Type': 'application/json',
-    });
+    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
@@ -21,9 +19,12 @@ class DirigenteTimeController {
 
   Future<bool> removerTime(int idTime) async {
     final times = await listTimes();
-    final time = times.firstWhere((t) => t.idTime == idTime);
+    final time = times.firstWhere(
+          (t) => t.idTime == idTime,
+      orElse: () => Time(idTime: idTime, nome: "Time desconhecido"),
+    );
 
-    if (time != null && time.jogadores != null && time.jogadores!.isNotEmpty) {
+    if (time.jogadores != null && time.jogadores!.isNotEmpty) {
       for (final jogador in time.jogadores!) {
         final res = await removerJogador(idTime, jogador.cpf);
         if (!res) return false;
@@ -31,12 +32,7 @@ class DirigenteTimeController {
     }
 
     final url = Uri.parse('$urlBase/time/$idTime');
-    final response = await http.delete(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+    final response = await http.delete(url, headers: {'Content-Type': 'application/json'});
 
     return response.statusCode == 200 || response.statusCode == 204;
   }
@@ -56,29 +52,30 @@ class DirigenteTimeController {
       },
     };
 
-    final response = await http.put(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
-    );
+    final response = await http.put(url,
+        headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
 
     return response.statusCode == 200 || response.statusCode == 204;
   }
 
   Future<bool> removerJogador(int idTime, String cpfJogador) async {
     final url = Uri.parse('$urlBase/time/remover-jogador');
+    final body = {'timeId': idTime, 'jogadorCpf': cpfJogador};
 
-    final body = {
-      'timeId': idTime,
-      'jogadorCpf': cpfJogador,
-    };
-
-    final response = await http.delete(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
-    );
+    final response = await http.delete(url,
+        headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
 
     return response.statusCode == 200 || response.statusCode == 204;
+  }
+
+  Future<String?> buscarFoto(int idTime) async {
+    final url = Uri.parse('http://152.70.216.121:8089/v1/time/$idTime/foto/url');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        return response.body;
+      }
+    } catch (_) {}
+    return null;
   }
 }

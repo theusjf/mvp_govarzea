@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/appbar_global.dart';
-import '../../time_view.dart';
 import '/models/pessoa_models.dart';
 import '/models/time_model.dart';
 import '../../../controllers/user_controllers/dirigente_controllers/dirigente_time_controller.dart';
@@ -17,7 +16,7 @@ class DirigenteTimeView extends StatefulWidget {
 
 class _DirigenteTimeViewState extends State<DirigenteTimeView> {
   final DirigenteTimeController controller = DirigenteTimeController();
-  late Future<List<Time>> futureTimes;
+  Future<List<Time>>? futureTimes;
 
   @override
   void initState() {
@@ -33,7 +32,7 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
         children: [
           Expanded(
             child: FutureBuilder<List<Time>>(
-              future: futureTimes,
+              future: futureTimes ?? Future.value([]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -57,14 +56,14 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
                     itemBuilder: (context, index) {
                       final time = times[index];
                       return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditarTimeView(time: time),
-                              ),
-                            );
-                          },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditarTimeView(time: time),
+                            ),
+                          ).then((_) => _carregarTimes());
+                        },
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -75,10 +74,21 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(
-                                  Icons.shield,
-                                  size: 48,
-                                  color: Color(0xFF122E6C),
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  child: time.fotoPath != null
+                                      ? Image.network(
+                                    time.fotoPath!,
+                                    fit: BoxFit.contain,
+                                  )
+                                      : const Center(
+                                    child: Icon(
+                                      Icons.shield,
+                                      size: 48,
+                                      color: Color(0xFF122E6C),
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
@@ -96,7 +106,6 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
                       );
                     },
                   );
-
                 }
               },
             ),
@@ -108,7 +117,8 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CriarTimeView(dirigente: widget.dirigente),
+                    builder: (context) =>
+                        CriarTimeView(dirigente: widget.dirigente),
                   ),
                 );
                 _carregarTimes();
@@ -126,14 +136,24 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
     );
   }
 
-  void _carregarTimes() {
-    setState(() {
-      futureTimes = controller.listTimes().then((times) {
-        return times.where((time) => time.dirigente?.cpf == widget.dirigente.cpf).toList();
-      });
-    });
-  }
+  void _carregarTimes() async {
+    final times = (await controller.listTimes())
+        .where((time) => time.dirigente?.cpf == widget.dirigente.cpf)
+        .toList();
 
+    for (var time in times) {
+      if (time.fotoPath == null) {
+        final foto = await controller.buscarFoto(time.idTime!);
+        time.fotoPath = foto;
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        futureTimes = Future.value(times);
+      });
+    }
+  }
 
   void _removerTime(int idTime) async {
     final confirm = await showDialog<bool>(
@@ -142,8 +162,14 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
         title: const Text('Confirmação'),
         content: const Text('Deseja realmente excluir este time?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Excluir')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Excluir'),
+          ),
         ],
       ),
     );
@@ -152,136 +178,15 @@ class _DirigenteTimeViewState extends State<DirigenteTimeView> {
 
     final sucesso = await controller.removerTime(idTime);
 
-    if (sucesso) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Time removido com sucesso')),
-      );
-      _carregarTimes();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Falha ao remover time')),
-      );
-    }
-  }
-
-  void _editarTimeDialog(Time time) {
-    final nomeController = TextEditingController(text: time.nome);
-    final localizacaoController = TextEditingController(text: time.localizacao);
-    DateTime? dataFundacao = time.fundacao;
-
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text('Editar Time'),
-          content: StatefulBuilder(
-            builder: (context, setStateDialog) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: nomeController,
-                      decoration: const InputDecoration(labelText: 'Nome'),
-                    ),
-                    TextField(
-                      controller: localizacaoController,
-                      decoration: const InputDecoration(labelText: 'Localização'),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text('Fundação: '),
-                        Text(dataFundacao != null
-                            ? dataFundacao!.toLocal().toString().split(' ')[0]
-                            : 'Não informada'),
-                        IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () async {
-                            final picked = await showDatePicker(
-                              context: context,
-                              initialDate: dataFundacao ?? DateTime.now(),
-                              firstDate: DateTime(1900),
-                              lastDate: DateTime.now(),
-                            );
-                            if (picked != null) {
-                              setStateDialog(() {
-                                dataFundacao = picked;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final novoTime = Time(
-                  idTime: time.idTime,
-                  nome: nomeController.text.trim(),
-                  localizacao: localizacaoController.text.trim(),
-                  fundacao: dataFundacao,
-                  dirigente: time.dirigente,
-                );
-
-                final sucesso = await controller.editarTime(novoTime);
-
-                Navigator.pop(context);
-
-                if (sucesso) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Time atualizado com sucesso')),
-                  );
-                  _carregarTimes();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Falha ao atualizar time')),
-                  );
-                }
-              },
-              child: const Text('Salvar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _removerJogadorDialog(Jogador jogador, int idTime) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Confirmação'),
-        content: Text('Deseja realmente excluir o jogador ${jogador.pessoa.nome} do time?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Excluir')),
-        ],
-      ),
-    );
-
-    if (confirm != true) return;
-
-    final sucesso = await controller.removerJogador(idTime, jogador.cpf);
+    if (!mounted) return;
 
     if (sucesso) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Jogador removido com sucesso')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Time removido com sucesso')));
       _carregarTimes();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Falha ao remover jogador')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Falha ao remover time')));
     }
   }
 }
