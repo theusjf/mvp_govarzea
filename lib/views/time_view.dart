@@ -3,6 +3,7 @@ import '/models/time_model.dart';
 import 'jogador_info_view.dart';
 import '/controllers/time_controller.dart';
 
+
 class TimeView extends StatefulWidget {
   final Time time;
   const TimeView({super.key, required this.time});
@@ -63,8 +64,8 @@ class _TimeViewState extends State<TimeView> with SingleTickerProviderStateMixin
         children: [
           _buildResumo(),
           _buildEscalacao(),
-          const Center(child: Text('Noticias')),
-          const Center(child: Text('Calendário')),
+          _buildNoticias(),
+          _buildCalendario(),
           const Center(child: Text('Resultados')),
           const Center(child: Text('Classificação')),
         ],
@@ -150,4 +151,81 @@ class _TimeViewState extends State<TimeView> with SingleTickerProviderStateMixin
       },
     );
   }
+
+  Widget _buildNoticias() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: controller.noticias.length,
+      itemBuilder: (context, index) {
+        final noticia = controller.noticias[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(noticia.titulo ?? "",
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(
+                  noticia.dataPublicacao != null
+                      ? formatarDataHora(noticia.dataPublicacao!)
+                      : "",
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(height: 8),
+                Text(noticia.conteudo ?? ""),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCalendario() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: controller.eventos.length,
+      itemBuilder: (context, index) {
+        final evento = controller.eventos[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  formatarDataHora(evento.data!),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(evento.titulo ?? "",
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(evento.conteudo ?? ""),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String formatarDataHora(DateTime data) {
+    final dia = data.day.toString().padLeft(2, '0');
+    final mes = data.month.toString().padLeft(2, '0');
+    final ano = data.year;
+    final hora = data.hour.toString().padLeft(2, '0');
+    final minuto = data.minute.toString().padLeft(2, '0');
+    return "$dia/$mes/$ano $hora:$minuto";
+  }
+
 }
