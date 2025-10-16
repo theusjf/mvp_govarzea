@@ -4,7 +4,7 @@ import '/models/pessoa_models.dart';
 import '/models/time_model.dart';
 import '../../../controllers/user_controllers/dirigente_controllers/dirigente_time_controller.dart';
 import 'criar_time_view.dart';
-import 'editar_time_view.dart';
+import 'editar_time_views/editar_time_view.dart';
 
 class DirigenteTimeView extends StatefulWidget {
   final Pessoa dirigente;
