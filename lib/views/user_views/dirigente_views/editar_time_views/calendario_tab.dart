@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '/models/time_model.dart';
 import '/controllers/user_controllers/dirigente_controllers/editar_time_controller.dart';
+import 'package:intl/intl.dart';
 
 class CalendarioTab extends StatefulWidget {
   final Time time;
@@ -13,32 +14,53 @@ class CalendarioTab extends StatefulWidget {
 
 class _CalendarioTabState extends State<CalendarioTab> {
   bool criandoEvento = false;
-  DateTime? _dataEvento;
   final TextEditingController _titulo = TextEditingController();
   final TextEditingController _conteudo = TextEditingController();
+  final TextEditingController _dataController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarEventos();
+  }
+
+  Future<void> _carregarEventos() async {
+    if (widget.time.idTime != null) {
+      await widget.controller.buscarEventos(widget.time.idTime!);
+      setState(() {});
+    }
+  }
 
   @override
   void dispose() {
     _titulo.dispose();
     _conteudo.dispose();
+    _dataController.dispose();
     super.dispose();
   }
 
   String formatarDataHora(DateTime data) {
-    final dia = data.day.toString().padLeft(2, '0');
-    final mes = data.month.toString().padLeft(2, '0');
-    final ano = data.year;
-    final hora = data.hour.toString().padLeft(2, '0');
-    final minuto = data.minute.toString().padLeft(2, '0');
-    return "$dia/$mes/$ano $hora:$minuto";
+    return DateFormat('dd/MM/yyyy HH:mm').format(data);
   }
 
   Future<void> _criarEvento() async {
-    final titulo = _titulo.text;
-    final conteudo = _conteudo.text;
-    if (titulo.isEmpty || conteudo.isEmpty || _dataEvento == null) {
+    final titulo = _titulo.text.trim();
+    final conteudo = _conteudo.text.trim();
+    final dataText = _dataController.text.trim();
+
+    if (titulo.isEmpty || conteudo.isEmpty || dataText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Preencha todos os campos e selecione a data")),
+        const SnackBar(content: Text("Preencha todos os campos")),
+      );
+      return;
+    }
+
+    DateTime? dataEvento;
+    try {
+      dataEvento = DateFormat('dd/MM/yyyy HH:mm').parseStrict(dataText);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Data inválida! Use dd/MM/yyyy HH:mm")),
       );
       return;
     }
@@ -48,13 +70,13 @@ class _CalendarioTabState extends State<CalendarioTab> {
       titulo,
       conteudo,
       null,
-      _dataEvento,
+      dataEvento,
     );
 
     if (sucesso) {
       _titulo.clear();
       _conteudo.clear();
-      _dataEvento = null;
+      _dataController.clear();
       criandoEvento = false;
       await widget.controller.buscarEventos(widget.time.idTime!);
       setState(() {});
@@ -103,45 +125,32 @@ class _CalendarioTabState extends State<CalendarioTab> {
                   maxLines: 3,
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _dataEvento != null
-                            ? "Data: ${formatarDataHora(_dataEvento!)}"
-                            : "Selecionar data",
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () async {
-                        final dataSelecionada = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2023),
-                          lastDate: DateTime(2100),
-                          locale: const Locale('pt', 'BR'),
-                        );
-                        if (dataSelecionada != null) {
-                          final horaSelecionada = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                          if (horaSelecionada != null) {
-                            setState(() {
-                              _dataEvento = DateTime(
-                                dataSelecionada.year,
-                                dataSelecionada.month,
-                                dataSelecionada.day,
-                                horaSelecionada.hour,
-                                horaSelecionada.minute,
-                              );
-                            });
-                          }
-                        }
-                      },
-                    ),
-                  ],
+                TextField(
+                  controller: _dataController,
+                  keyboardType: TextInputType.datetime,
+                  decoration: const InputDecoration(
+                    hintText: "Data e hora (dd/MM/yyyy HH:mm)",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (value) {
+                    // Adiciona barra e dois pontos automaticamente
+                    if (value.length == 2 || value.length == 5) {
+                      _dataController.text = value + '/';
+                      _dataController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: _dataController.text.length),
+                      );
+                    } else if (value.length == 10) {
+                      _dataController.text = value + ' ';
+                      _dataController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: _dataController.text.length),
+                      );
+                    } else if (value.length == 13) {
+                      _dataController.text = value + ':';
+                      _dataController.selection = TextSelection.fromPosition(
+                        TextPosition(offset: _dataController.text.length),
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(

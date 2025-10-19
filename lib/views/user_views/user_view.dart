@@ -33,6 +33,7 @@ class _UsuarioViewState extends State<UsuarioView> {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
+        showUnselectedLabels: false,
         onTap: (index) {
           setState(() {
             atualIndex = index;
@@ -41,8 +42,6 @@ class _UsuarioViewState extends State<UsuarioView> {
         currentIndex: atualIndex,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Painel de Jogos'),
-          BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: 'Criar'),
           BottomNavigationBarItem(icon: Icon(Icons.shield), label: 'Times'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil')
         ],

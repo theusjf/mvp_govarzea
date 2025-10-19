@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/appbar_global.dart';
 import '/views/auth_views/login_view.dart';
 import '/models/pessoa_models.dart';
@@ -8,7 +9,6 @@ import '/controllers/user_controllers/perfil_controller.dart';
 
 class PerfilView extends StatefulWidget {
   final Pessoa usuario;
-
   const PerfilView({super.key, required this.usuario});
 
   @override
@@ -23,16 +23,20 @@ class _PerfilViewState extends State<PerfilView> {
   void initState() {
     super.initState();
     controller = PerfilController(widget.usuario);
-    fotoUrl = widget.usuario.fotoUrl;
-    _carregarFoto();
+    _loadFoto();
   }
 
-  void _carregarFoto() async {
-    final url = await controller.buscarFoto(widget.usuario.cpf);
-    if (url != null) {
-      setState(() {
-        fotoUrl = url;
-      });
+  Future<void> _loadFoto() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cachedFoto = prefs.getString('usuario_${widget.usuario.cpf}_foto');
+    if (cachedFoto != null) {
+      setState(() => fotoUrl = cachedFoto);
+    } else {
+      final url = await controller.buscarFoto(widget.usuario.cpf);
+      if (url != null) {
+        setState(() => fotoUrl = url);
+        await prefs.setString('usuario_${widget.usuario.cpf}_foto', url);
+      }
     }
   }
 
@@ -43,8 +47,9 @@ class _PerfilViewState extends State<PerfilView> {
     if (pickedFile != null) {
       final file = File(pickedFile.path);
       final novaUrl = await controller.uploadFoto(widget.usuario.cpf, file);
-
       if (novaUrl != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('usuario_${widget.usuario.cpf}_foto', novaUrl);
         setState(() {
           fotoUrl = "$novaUrl?${DateTime.now().millisecondsSinceEpoch}";
         });
@@ -104,9 +109,7 @@ class _PerfilViewState extends State<PerfilView> {
                 CircleAvatar(
                   radius: 80,
                   backgroundColor: Colors.grey,
-                  backgroundImage: fotoUrl != null
-                      ? NetworkImage(fotoUrl!)
-                      : null,
+                  backgroundImage: fotoUrl != null ? NetworkImage(fotoUrl!) : null,
                   child: fotoUrl == null
                       ? Icon(Icons.person, size: 70, color: Colors.grey[200])
                       : null,
@@ -141,9 +144,7 @@ class _PerfilViewState extends State<PerfilView> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              sucesso
-                                  ? 'Usuário atualizado com sucesso'
-                                  : 'Erro ao atualizar usuário',
+                              sucesso ? 'Usuário atualizado com sucesso' : 'Erro ao atualizar usuário',
                             ),
                           ),
                         );
@@ -157,9 +158,7 @@ class _PerfilViewState extends State<PerfilView> {
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    child: Text(controller.isEditing
-                        ? 'Salvar Alterações'
-                        : 'Editar Perfil'),
+                    child: Text(controller.isEditing ? 'Salvar Alterações' : 'Editar Perfil'),
                   ),
                 ],
               ),
@@ -167,13 +166,16 @@ class _PerfilViewState extends State<PerfilView> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginView(),
-                    ),
-                  );
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
+                  if (mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginView()),
+                          (route) => false,
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
@@ -190,9 +192,7 @@ class _PerfilViewState extends State<PerfilView> {
                   final sucesso = await controller.deleteUser();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                        sucesso ? 'Conta excluída' : 'Erro ao excluir a conta',
-                      ),
+                      content: Text(sucesso ? 'Conta excluída' : 'Erro ao excluir a conta'),
                     ),
                   );
                   if (sucesso) {

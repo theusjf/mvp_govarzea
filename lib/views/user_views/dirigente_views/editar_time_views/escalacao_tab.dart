@@ -15,6 +15,17 @@ class EscalacaoTab extends StatefulWidget {
 
 class _EscalacaoTabState extends State<EscalacaoTab> {
   @override
+  void initState() {
+    super.initState();
+    _carregarJogadores();
+  }
+
+  void _carregarJogadores() async {
+    await widget.controller.searchJogadores();
+    setState(() {});
+  }
+
+
   Widget build(BuildContext context) {
     final jogadores = widget.time.jogadores ?? [];
 

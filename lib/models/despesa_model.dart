@@ -1,7 +1,6 @@
 class Despesa {
   int? id;
   String titulo;
-  String descricao;
   double valor;
   String data;
   int timeId;
@@ -9,7 +8,6 @@ class Despesa {
   Despesa({
     this.id,
     required this.titulo,
-    required this.descricao,
     required this.valor,
     required this.data,
     required this.timeId,
@@ -19,7 +17,6 @@ class Despesa {
     return {
       'id': id,
       'titulo': titulo,
-      'descricao': descricao,
       'valor': valor,
       'data': data,
       'time_id': timeId,
@@ -30,7 +27,6 @@ class Despesa {
     return Despesa(
       id: map['id'],
       titulo: map['titulo'],
-      descricao: map['descricao'],
       valor: map['valor'],
       data: map['data'],
       timeId: map['time_id'],

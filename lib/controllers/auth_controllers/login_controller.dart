@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '/views/user_views/user_view.dart';
 import '/models/pessoa_models.dart';
 import '../get_tipo_perfil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController {
   final String authUrl = 'http://167.234.248.188:8080/auth';
@@ -48,29 +49,15 @@ class LoginController {
       String? tipoPerfil;
 
       final jogadorResponse = await http.get(Uri.parse('$jogadorUrl/$cpf'));
-
-      if (jogadorResponse.statusCode == 200 && jogadorResponse.body.isNotEmpty) {
-        tipoPerfil = 'ROLE_JOGADOR';
-      }
+      if (jogadorResponse.statusCode == 200 && jogadorResponse.body.isNotEmpty) tipoPerfil = 'ROLE_JOGADOR';
 
       final dirigenteResponse = await http.get(Uri.parse('$dirigenteUrl/$cpf'));
-
-      if (dirigenteResponse.statusCode == 200 && dirigenteResponse.body.isNotEmpty) {
-        tipoPerfil = 'ROLE_DIRIGENTE';
-      }
+      if (dirigenteResponse.statusCode == 200 && dirigenteResponse.body.isNotEmpty) tipoPerfil = 'ROLE_DIRIGENTE';
 
       final torcedorResponse = await http.get(Uri.parse('$torcedorUrl/$cpf'));
+      if (torcedorResponse.statusCode == 200 && torcedorResponse.body.isNotEmpty) tipoPerfil = 'ROLE_TORCEDOR';
 
-      if (torcedorResponse.statusCode == 200 && torcedorResponse.body.isNotEmpty) {
-        tipoPerfil = 'ROLE_TORCEDOR';
-      }
-
-      final body = {
-        'email': email,
-        'password': senha,
-        'tipoPerfil': tipoPerfil,
-      };
-
+      final body = {'email': email, 'password': senha, 'tipoPerfil': tipoPerfil};
 
       final response = await http.post(
         Uri.parse(authUrl),
@@ -85,10 +72,13 @@ class LoginController {
           orElse: () => Role.ROLE_Torcedor,
         );
 
-        // pegar tipo perfil (temporário)
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('email', usuario.email ?? '');
+        await prefs.setString('senha', senha);
+        await prefs.setString('tipoPerfil', tipoPerfil ?? '');
+
         final getTipoPerfil = GetTipoPerfil(usuario);
         Role? perfil = await getTipoPerfil.fetchTipoPerfil();
-
         usuario.tipoPerfil = perfil;
 
         Navigator.pushReplacement(
@@ -97,21 +87,76 @@ class LoginController {
             builder: (context) => UsuarioView(usuario: usuario),
           ),
         );
-      } else if (response.statusCode == 401 || response.statusCode == 500) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Credenciais inválidas')),
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro no login: ${response.statusCode}')),
-        );
       }
     } catch (e) {
-      print("❌ Erro inesperado: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro inesperado: $e')),
       );
     }
   }
 
+  Future<Widget?> autoLogin(String email, String senha) async {
+    try {
+      final pessoasResponse = await http.get(
+        Uri.parse(pessoaUrl),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (pessoasResponse.statusCode != 200) return null;
+
+      final lista = json.decode(utf8.decode(pessoasResponse.bodyBytes)) as List;
+      final userJson = lista.cast<Map<String, dynamic>>().firstWhere(
+            (u) => u['email'] == email,
+        orElse: () => {},
+      );
+
+      if (userJson.isEmpty) return null;
+
+      final cpf = userJson['cpf'];
+      String? tipoPerfil;
+
+      final jogadorResponse = await http.get(Uri.parse('$jogadorUrl/$cpf'));
+      if (jogadorResponse.statusCode == 200 && jogadorResponse.body.isNotEmpty) tipoPerfil = 'ROLE_JOGADOR';
+
+      final dirigenteResponse = await http.get(Uri.parse('$dirigenteUrl/$cpf'));
+      if (dirigenteResponse.statusCode == 200 && dirigenteResponse.body.isNotEmpty) tipoPerfil = 'ROLE_DIRIGENTE';
+
+      final torcedorResponse = await http.get(Uri.parse('$torcedorUrl/$cpf'));
+      if (torcedorResponse.statusCode == 200 && torcedorResponse.body.isNotEmpty) tipoPerfil = 'ROLE_TORCEDOR';
+
+      final body = {'email': email, 'password': senha, 'tipoPerfil': tipoPerfil};
+
+      final response = await http.post(
+        Uri.parse(authUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final usuario = Pessoa.fromJson(userJson);
+        usuario.tipoPerfil = Role.values.firstWhere(
+              (r) => r.toString().split('.').last == tipoPerfil,
+          orElse: () => Role.ROLE_Torcedor,
+        );
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('email', usuario.email ?? '');
+        await prefs.setString('senha', senha);
+        await prefs.setString('tipoPerfil', tipoPerfil ?? '');
+
+        final getTipoPerfil = GetTipoPerfil(usuario);
+        Role? perfil = await getTipoPerfil.fetchTipoPerfil();
+        usuario.tipoPerfil = perfil;
+
+        return UsuarioView(usuario: usuario);
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
 }

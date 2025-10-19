@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 import '/models/time_model.dart';
+import 'resumo_tab_info.dart';
+import 'escalacao_tab_info.dart';
+import 'noticias_tab_info.dart';
+import 'calendario_tab_info.dart';
 import '/controllers/user_controllers/dirigente_controllers/editar_time_controller.dart';
-import 'resumo_tab.dart';
-import 'escalacao_tab.dart';
-import 'noticias_tab.dart';
-import 'despesa_tab.dart';
-import 'calendario_tab.dart';
 
-class EditarTimeView extends StatefulWidget {
+class InfoTimeView extends StatefulWidget {
   final Time time;
-  const EditarTimeView({super.key, required this.time});
+  const InfoTimeView({super.key, required this.time});
 
   @override
-  State<EditarTimeView> createState() => _EditarTimeViewState();
+  State<InfoTimeView> createState() => _InfoTimeViewState();
 }
 
-class _EditarTimeViewState extends State<EditarTimeView> with SingleTickerProviderStateMixin {
+class _InfoTimeViewState extends State<InfoTimeView>
+    with SingleTickerProviderStateMixin {
+
   late TabController _tabController;
-  late EditarTimeController controller;
+  late EditarTimeController editarTimeController;
 
   @override
   void initState() {
     super.initState();
-    controller = EditarTimeController();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
+    editarTimeController = EditarTimeController();
   }
 
   @override
@@ -31,21 +32,21 @@ class _EditarTimeViewState extends State<EditarTimeView> with SingleTickerProvid
     _tabController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.time.nome ?? 'Editar Time',
+          widget.time.nome ?? 'Informações do Time',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
         backgroundColor: const Color(0xFF122E6C),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -57,19 +58,16 @@ class _EditarTimeViewState extends State<EditarTimeView> with SingleTickerProvid
             Tab(text: 'ESCALAÇÃO'),
             Tab(text: 'NOTÍCIAS'),
             Tab(text: 'CALENDÁRIO'),
-            Tab(text: 'DESPESAS'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          ResumoTab(time: widget.time, controller: controller),
-          EscalacaoTab(time: widget.time, controller: controller),
-          NoticiasTab(time: widget.time, controller: controller),
-          CalendarioTab(time: widget.time, controller: controller),
-          DespesasTab(time: widget.time)
-
+          ResumoTabInfo(time: widget.time, controller: editarTimeController,),
+          EscalacaoTabInfo(time: widget.time, controller: editarTimeController),
+          NoticiasTabInfo(time: widget.time, controller: editarTimeController),
+          CalendarioTabInfo(time: widget.time, controller: editarTimeController),
         ],
       ),
     );

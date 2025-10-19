@@ -63,7 +63,7 @@ class _JogadorTimeViewState extends State<JogadorTimeView> {
                     leading: const Icon(Icons.person),
                     title: Text(jogador.pessoa.nome),
                     subtitle: Text(
-                      'Apelido: ${jogador.apelido ?? "-"} | CPF: ${jogador.cpf}',
+                      'Apelido: ${jogador.apelido ?? "-"}',
                     ),
                   );
                 },

@@ -30,7 +30,6 @@ class DespesaDB {
     CREATE TABLE relatorios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT NOT NULL,
-      descricao TEXT NOT NULL,
       valor REAL NOT NULL,
       data TEXT NOT NULL,
       time_id INTEGER NOT NULL
@@ -38,13 +37,12 @@ class DespesaDB {
   ''');
   }
 
-
   Future<int> inserirRelatorio(Despesa relatorio) async {
     final db = await instance.database;
     return await db.insert('relatorios', relatorio.toMap());
   }
 
-  Future<List<Despesa>> listarRelatoriosPorTime(int timeId) async {
+  Future<List<Despesa>> listarRelatorios(int timeId) async {
     final db = await instance.database;
     final result = await db.query(
       'relatorios',

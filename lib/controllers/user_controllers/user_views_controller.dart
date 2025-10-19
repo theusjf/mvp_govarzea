@@ -16,8 +16,6 @@ class UsuarioViewsController {
 
   List<Widget> get pages => [
     HomeView(usuario: usuario),
-    PainelView(usuario: usuario),
-    CampeonatosView(),
     timeView,
     PerfilView(usuario: usuario),
   ];
