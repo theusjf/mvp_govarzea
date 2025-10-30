@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "969672774343",
-    "project_id": "govarzeamvp",
-    "storage_bucket": "govarzeamvp.firebasestorage.app"
+    "project_number": "1077318747827",
+    "project_id": "sms-varzea",
+    "storage_bucket": "sms-varzea.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:969672774343:android:156bc07b3a7236be2fe4e2",
+        "mobilesdk_app_id": "1:1077318747827:android:28bc0fb80010b19b4552c6",
         "android_client_info": {
           "package_name": "com.example.mvp_govarzea"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDEhW18Ze7L59mwqf7myVMi1XqatXcG6as"
+          "current_key": "AIzaSyBtUdShsiXdXu7VyDf5JruUw_zcC9EiSDA"
         }
       ],
       "services": {
